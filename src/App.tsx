@@ -17,6 +17,7 @@ const App: React.FC = () => {
           win={win}
           lose={lose}
           winRate={winRate}
+          settings={settings}
         />
       </div>
     );
