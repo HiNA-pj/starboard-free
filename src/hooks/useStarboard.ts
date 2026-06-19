@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 const KEY_TITLE = 'starboard_title';
 const KEY_WIN = 'starboard_win';
 const KEY_LOSE = 'starboard_lose';
+const KEY_SETTINGS = 'starboard_settings';
 
 // APIエンドポイント
 const API_STATE = '/api/state';
@@ -14,6 +15,29 @@ const POLL_INTERVAL = 3000;
 
 // ローカル変更後の上書きガード期間 (ms) - この間はポーリング結果を無視
 const LOCAL_CHANGE_GUARD_MS = 1000;
+
+// Settings型定義
+type Layout = 'standard' | 'compact';
+
+interface Settings {
+  layout: Layout;
+}
+
+const DEFAULT_SETTINGS: Settings = { layout: 'standard' };
+
+function parseSettings(raw: unknown): Settings {
+  if (
+    raw &&
+    typeof raw === 'object' &&
+    'layout' in raw
+  ) {
+    const layout = (raw as { layout?: unknown }).layout;
+    if (layout === 'standard' || layout === 'compact') {
+      return { layout };
+    }
+  }
+  return DEFAULT_SETTINGS;
+}
 
 export interface StarboardState {
   title: string;
@@ -38,12 +62,26 @@ export function useStarboard() {
     return saved ? Math.max(0, parseInt(saved, 10)) : 0;
   });
 
+  // settings state (localStorageから読み込み、パース)
+  const [settings, setSettingsState] = useState<Settings>(() => {
+    try {
+      const saved = localStorage.getItem(KEY_SETTINGS);
+      return saved ? parseSettings(JSON.parse(saved)) : DEFAULT_SETTINGS;
+    } catch {
+      return DEFAULT_SETTINGS;
+    }
+  });
+
+  // サーバー接続状態
+  const [serverConnected, setServerConnected] = useState(false);
+
   // --- Refs (クロージャの古い値問題を回避するため) ---
 
   // 常に最新の値を保持する ref
   const titleRef = useRef(title);
   const winRef = useRef(win);
   const loseRef = useRef(lose);
+  const settingsRef = useRef(settings);
 
   // コンポーネントの updatedAt (ローカルで最後に変更した時刻)
   const localUpdatedAtRef = useRef(Date.now());
@@ -55,6 +93,7 @@ export function useStarboard() {
   titleRef.current = title;
   winRef.current = win;
   loseRef.current = lose;
+  settingsRef.current = settings;
 
   // --- サーバー同期関数 ---
 
@@ -68,6 +107,7 @@ export function useStarboard() {
           title: titleRef.current,
           win: winRef.current,
           lose: loseRef.current,
+          settings: settingsRef.current,
         }),
       });
       if (res.ok) {
@@ -79,9 +119,11 @@ export function useStarboard() {
             localUpdatedAtRef.current = data.updatedAt;
           }
         }
+        setServerConnected(true);
       }
     } catch {
       // サーバー未起動時は静かに無視
+      setServerConnected(false);
     }
   }, []);
 
@@ -91,6 +133,8 @@ export function useStarboard() {
       const res = await fetch(API_STATE);
       if (!res.ok) return;
       const data = await res.json();
+
+      setServerConnected(true);
 
       // サーバーの updatedAt がローカルの最終更新時刻より新しい場合のみ反映
       if (typeof data.updatedAt === 'number') {
@@ -124,11 +168,20 @@ export function useStarboard() {
           setLoseState(validated);
           localStorage.setItem(KEY_LOSE, String(validated));
         }
+        if (data.settings !== undefined) {
+          const parsed = parseSettings(data.settings);
+          if (JSON.stringify(parsed) !== JSON.stringify(settingsRef.current)) {
+            settingsRef.current = parsed;
+            setSettingsState(parsed);
+            localStorage.setItem(KEY_SETTINGS, JSON.stringify(parsed));
+          }
+        }
 
         localUpdatedAtRef.current = data.updatedAt;
       }
     } catch {
       // サーバー未起動時は静かに無視
+      setServerConnected(false);
     }
   }, []);
 
@@ -142,6 +195,7 @@ export function useStarboard() {
         const res = await fetch(API_STATE);
         if (res.ok) {
           const data = await res.json();
+          setServerConnected(true);
           if (typeof data.title === 'string') {
             titleRef.current = data.title;
             setTitleState(data.title);
@@ -159,12 +213,19 @@ export function useStarboard() {
             setLoseState(validated);
             localStorage.setItem(KEY_LOSE, String(validated));
           }
+          if (data.settings !== undefined) {
+            const parsed = parseSettings(data.settings);
+            settingsRef.current = parsed;
+            setSettingsState(parsed);
+            localStorage.setItem(KEY_SETTINGS, JSON.stringify(parsed));
+          }
           if (typeof data.updatedAt === 'number') {
             localUpdatedAtRef.current = data.updatedAt;
           }
         }
       } catch {
         // サーバー未起動時はローカルの値を使う
+        setServerConnected(false);
       }
     })();
   }, []);
@@ -228,12 +289,31 @@ export function useStarboard() {
           if (typeof data.updatedAt === 'number') {
             localUpdatedAtRef.current = data.updatedAt;
           }
+          // サーバー側の settings を反映（リセット後も維持されているはず）
+          if (data.settings !== undefined) {
+            const parsed = parseSettings(data.settings);
+            settingsRef.current = parsed;
+            setSettingsState(parsed);
+            localStorage.setItem(KEY_SETTINGS, JSON.stringify(parsed));
+          }
+          setServerConnected(true);
         }
       } catch {
         // サーバー未起動時は静かに無視
+        setServerConnected(false);
       }
     })();
   }, []);
+
+  // setLayout: settings.layout を変更する
+  const setLayout = useCallback((layout: Layout) => {
+    localUpdatedAtRef.current = Date.now();
+    const newSettings: Settings = { layout };
+    settingsRef.current = newSettings;
+    setSettingsState(newSettings);
+    localStorage.setItem(KEY_SETTINGS, JSON.stringify(newSettings));
+    queueMicrotask(() => postState());
+  }, [postState]);
 
   // 別タブや別ウィンドウでの localStorage 変更を検知して同期する
   useEffect(() => {
@@ -249,6 +329,14 @@ export function useStarboard() {
         const validated = Math.max(0, parseInt(e.newValue, 10) || 0);
         loseRef.current = validated;
         setLoseState(validated);
+      } else if (e.key === KEY_SETTINGS && e.newValue !== null) {
+        try {
+          const parsed = parseSettings(JSON.parse(e.newValue));
+          settingsRef.current = parsed;
+          setSettingsState(parsed);
+        } catch {
+          // パースに失敗したら無視
+        }
       }
     };
 
@@ -267,9 +355,12 @@ export function useStarboard() {
     win,
     lose,
     winRate,
+    serverConnected,
+    settings,
     setTitle: updateTitle,
     setWin: updateWin,
     setLose: updateLose,
     resetScores,
+    setLayout,
   };
 }

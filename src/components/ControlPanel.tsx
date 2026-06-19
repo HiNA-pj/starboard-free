@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Plus, Minus, RotateCcw, Copy, Check, Trophy, AlertCircle } from 'lucide-react';
+import { Plus, Minus, RotateCcw, Copy, Check, Trophy, Monitor, Wifi, WifiOff } from 'lucide-react';
 
 interface ControlPanelProps {
   title: string;
   win: number;
   lose: number;
   winRate: string;
+  serverConnected: boolean;
   setTitle: (t: string) => void;
   setWin: (updater: number | ((prev: number) => number)) => void;
   setLose: (updater: number | ((prev: number) => number)) => void;
@@ -17,6 +18,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   win,
   lose,
   winRate,
+  serverConnected,
   setTitle,
   setWin,
   setLose,
@@ -40,11 +42,34 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
     <div className="max-w-xl mx-auto px-4 py-8">
       <div className="bg-slate-800 border border-slate-700 rounded-2xl shadow-xl overflow-hidden">
         {/* ヘッダー */}
-        <div className="px-6 py-4 bg-gradient-to-r from-indigo-600 to-violet-600 border-b border-slate-700 flex items-center justify-between">
-          <h1 className="text-xl font-bold tracking-wider flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-amber-300" />
-            <span>Starboard Free <span className="text-xs bg-indigo-800 text-indigo-200 px-1.5 py-0.5 rounded ml-1 font-mono">v0</span></span>
-          </h1>
+        <div className="px-6 py-4 bg-gradient-to-r from-indigo-600 to-violet-600 border-b border-slate-700">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-bold tracking-wider flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-amber-300" />
+              <span>Starboard Free <span className="text-xs bg-indigo-800 text-indigo-200 px-1.5 py-0.5 rounded ml-1 font-mono">v0</span></span>
+            </h1>
+            {/* サーバー接続ステータス */}
+            <div
+              className={`flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-full ${
+                serverConnected
+                  ? 'bg-emerald-500/15 text-emerald-400'
+                  : 'bg-amber-500/15 text-amber-400'
+              }`}
+              title={serverConnected ? 'APIサーバーと通信中' : 'サーバー未接続・ローカル動作中'}
+            >
+              {serverConnected ? (
+                <>
+                  <Wifi className="w-3 h-3" />
+                  <span>サーバー同期中</span>
+                </>
+              ) : (
+                <>
+                  <WifiOff className="w-3 h-3" />
+                  <span>ローカル動作中</span>
+                </>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* コンテンツ */}
@@ -121,27 +146,6 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
           {/* 操作ボタン群 */}
           <div className="flex flex-col gap-3 pt-2">
             <button
-              onClick={handleCopyUrl}
-              className={`w-full py-3 px-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition duration-200 border ${
-                copied
-                  ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
-                  : 'bg-indigo-600 hover:bg-indigo-500 border-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-              }`}
-            >
-              {copied ? (
-                <>
-                  <Check className="w-5 h-5" />
-                  <span>OBS表示URLをコピーしました！</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-5 h-5" />
-                  <span>OBS表示ページのURLをコピー</span>
-                </>
-              )}
-            </button>
-
-            <button
               onClick={() => {
                 if (window.confirm('数値をリセットしますか？ (タイトルは保持されます)')) {
                   resetScores();
@@ -155,14 +159,50 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
           </div>
         </div>
 
-        {/* OBS向け説明 */}
-        <div className="px-6 py-4 bg-slate-900/40 border-t border-slate-700/60 flex gap-2.5 items-start text-xs text-slate-400">
-          <AlertCircle className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
-          <div className="space-y-1">
-            <p className="font-semibold text-slate-300">OBS Studioへの追加方法</p>
-            <p>1. 上記のボタンから「OBS表示ページのURL」をコピーします。</p>
-            <p>2. OBSで「ソース」追加 ➔ 「ブラウザ」を選択。</p>
-            <p>3. コピーしたURLを貼り付け、幅「800」、高さ「200」程度に設定してください。</p>
+        {/* OBS設定パネル */}
+        <div className="px-6 py-4 bg-slate-900/40 border-t border-slate-700/60">
+          <div className="flex items-center gap-2 mb-3">
+            <Monitor className="w-4 h-4 text-indigo-400" />
+            <span className="text-sm font-semibold text-slate-300">OBS設定</span>
+          </div>
+
+          <div className="space-y-2.5">
+            {/* URL表示とコピーボタン */}
+            <div className="flex items-center gap-2">
+              <code className="flex-1 text-xs text-slate-400 bg-slate-900/80 px-2.5 py-1.5 rounded border border-slate-700/50 truncate font-mono select-all">
+                {window.location.origin}/overlay
+              </code>
+              <button
+                onClick={handleCopyUrl}
+                className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition duration-200 ${
+                  copied
+                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                    : 'bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-600'
+                }`}
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-3.5 h-3.5" />
+                    <span>コピーしました</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5" />
+                    <span>URLをコピー</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* 推奨サイズ表示 */}
+            <div className="text-xs text-slate-500 flex items-center gap-4">
+              <span>推奨サイズ: <span className="text-slate-400 font-mono">幅 800</span> / <span className="text-slate-400 font-mono">高さ 200</span></span>
+            </div>
+
+            {/* 説明文 */}
+            <p className="text-xs text-slate-500 leading-relaxed">
+              OBSのブラウザソースにこのURLを設定してください。
+            </p>
           </div>
         </div>
       </div>

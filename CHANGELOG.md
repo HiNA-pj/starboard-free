@@ -1,5 +1,32 @@
 # Changelog
 
+## v0.3.0 (2026-06-18)
+
+操作画面のユーザビリティ改善版。
+
+### 追加
+
+- **OBS設定パネル**: 操作画面下部にOBS設定パネルを追加。URL表示・URLコピーボタン・推奨サイズ表示を一体化。
+- **URLコピー機能**: `navigator.clipboard.writeText` で OBS 用 URL をワンクリックコピー。成功時に「コピーしました」と表示、失敗時もアプリは壊れない。
+- **サーバー接続ステータス**: ヘッダー右側に接続状態を表示。
+  - サーバー接続時：「サーバー同期中」（緑色、`Wifi` アイコン）
+  - サーバー未接続時：「ローカル動作中」（黄色、`WifiOff` アイコン）
+  - overlay画面には表示しない。
+
+### 修正
+
+- **既存のカウント処理・API同期処理は維持**: `useRef` / `updatedAt` / ガード期間 / 関数型更新は一切変更なし。
+- **`src/main.tsx` のインポート修正**: `import { App }` → `import App`（デフォルトエクスポートに統一）。
+
+### 変更したファイル
+
+- `src/components/ControlPanel.tsx` — OBS設定パネル追加、`serverConnected` props 追加
+- `src/hooks/useStarboard.ts` — `serverConnected` state を追加、戻り値に追加
+- `src/App.tsx` — `serverConnected` prop を ControlPanel に渡す
+- `src/main.tsx` — インポート形式を修正
+
+---
+
 ## v0.2.1 (2026-06-17)
 
 同期競合バグの修正版。
