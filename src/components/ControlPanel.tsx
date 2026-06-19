@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { Plus, Minus, RotateCcw, Copy, Check, Trophy, Monitor, Wifi, WifiOff } from 'lucide-react';
+import { Plus, Minus, RotateCcw, Copy, Check, Trophy, Monitor, Wifi, WifiOff, PanelTop } from 'lucide-react';
+
+type Layout = 'standard' | 'compact';
+
+interface Settings {
+  layout: Layout;
+}
 
 interface ControlPanelProps {
   title: string;
@@ -7,10 +13,12 @@ interface ControlPanelProps {
   lose: number;
   winRate: string;
   serverConnected: boolean;
+  settings: Settings;
   setTitle: (t: string) => void;
   setWin: (updater: number | ((prev: number) => number)) => void;
   setLose: (updater: number | ((prev: number) => number)) => void;
   resetScores: () => void;
+  setLayout: (layout: Layout) => void;
 }
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
@@ -19,10 +27,12 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   lose,
   winRate,
   serverConnected,
+  settings,
   setTitle,
   setWin,
   setLose,
   resetScores,
+  setLayout,
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -197,6 +207,36 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             {/* 推奨サイズ表示 */}
             <div className="text-xs text-slate-500 flex items-center gap-4">
               <span>推奨サイズ: <span className="text-slate-400 font-mono">幅 800</span> / <span className="text-slate-400 font-mono">高さ 200</span></span>
+            </div>
+
+            {/* 表示モード切り替え */}
+            <div className="pt-2 border-t border-slate-700/40">
+              <div className="flex items-center gap-2 mb-2">
+                <PanelTop className="w-3.5 h-3.5 text-indigo-400" />
+                <span className="text-xs font-semibold text-slate-400">表示モード</span>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setLayout('standard')}
+                  className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition ${
+                    settings.layout === 'standard'
+                      ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/30'
+                      : 'bg-slate-800 text-slate-400 hover:text-slate-300 border border-slate-700/50'
+                  }`}
+                >
+                  Standard
+                </button>
+                <button
+                  onClick={() => setLayout('compact')}
+                  className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition ${
+                    settings.layout === 'compact'
+                      ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/30'
+                      : 'bg-slate-800 text-slate-400 hover:text-slate-300 border border-slate-700/50'
+                  }`}
+                >
+                  Compact
+                </button>
+              </div>
             </div>
 
             {/* 説明文 */}
