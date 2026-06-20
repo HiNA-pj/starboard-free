@@ -206,7 +206,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
             {/* 推奨サイズ表示 */}
             <div className="text-xs text-slate-500 flex items-center gap-4">
-              <span>推奨サイズ: <span className="text-slate-400 font-mono">幅 800</span> / <span className="text-slate-400 font-mono">高さ 200</span></span>
+              <span>推奨サイズ: <span className="text-slate-400 font-mono">幅 {settings.layout === 'compact' ? '480' : '800'}</span> / <span className="text-slate-400 font-mono">高さ {settings.layout === 'compact' ? '120' : '200'}</span></span>
             </div>
 
             {/* 表示モード切り替え */}
