@@ -1,5 +1,125 @@
 # Changelog
 
+## v0.5.2 (2026-06-23)
+
+OBSOverlay に Color Preset 配色を反映。
+
+### 追加
+
+- **カラープリセットの実テーマ反映**: OBSOverlay に各プリセットの色・枠線・影・文字色・背景色を反映。
+  - **Default**: 従来のネオン紫/ピンク。
+  - **Blue**: 爽やかで落ち着いた青・シアン。
+  - **Red**: 茶色や紫に沈まない、明瞭なクリムゾン・ダークレッド系背景（`#5a0f1a`）と、赤・アンバー系の文字・枠・グロウ。
+  - **Mono**: シンプルでスタイリッシュな白・グレー。
+- **Standard / Compact 両対応**: 両方の表示モード（レイアウト）にプリセット配色を完全に適用。
+
+### 変更したファイル
+
+- `src/components/OBSOverlay.tsx` — 4カラーテーマのスタイルを静的に定義し、Standard / Compact 双方のJSXに適用。
+
+---
+
+## v0.5.1 (2026-06-23)
+
+ControlPanelに Color Preset 切り替えUIを追加。
+
+### 追加
+
+- **カラープリセット選択UI**: OBS設定パネル内に「カラープリセット」セクションを追加。
+  - Default / Blue / Red / Mono から選択可能な4カラムボタングループ。
+  - 選択中のアクティブプリセットを青色（indigo）で強調。
+  - 表示設定（layout）を消去・上書きせずに `colorPreset` のみを安全に更新。
+
+### 変更したファイル
+
+- `src/App.tsx` — `setColorPreset` の受け渡し
+- `src/components/ControlPanel.tsx` — カラープリセットボタングループUIの追加
+
+---
+
+## v0.5.0 (2026-06-23)
+
+Color Preset (`settings.colorPreset`) の土台追加。
+
+### 追加
+
+- **settings 構造の拡張**: settings に `colorPreset: "default" | "blue" | "red" | "mono"` を追加。初期値は `default`。
+- **後方互換性とフォールバック**:
+  - 古い `settings` に `colorPreset` がない場合は自動的に `default` を補完。
+  - 不正な `colorPreset` が送られてきた場合は `default` に安全にフォールバック。
+- **スコアリセット時の維持**: 勝敗数をリセットしても、`layout` と同様に `colorPreset` の設定値をクリアせずにそのまま維持。
+
+### 変更したファイル
+
+- `server/index.ts` — サーバー側の `parseSettings()` 拡張
+- `src/hooks/useStarboard.ts` — フロント側の `parseSettings()` 拡張、`setColorPreset` 関数及び `storage` 同期ロジックの追加
+
+---
+
+## v0.4.3 (2026-06-20)
+
+ControlPanel の推奨サイズ表示を `layout` に連動して切り替えるよう修正。
+
+### 修正
+
+- **推奨サイズ表示の自動切り替え**: 
+  - `standard` 選択時は「推奨サイズ: 幅 800 / 高さ 200」
+  - `compact` 選択時は「推奨サイズ: 幅 480 / 高さ 120」
+
+### 変更したファイル
+
+- `src/components/ControlPanel.tsx` — 推奨サイズ表示部の条件分岐。
+
+---
+
+## v0.4.2 (2026-06-20)
+
+OBSOverlay に Compact 表示（小さめ表示）を反映。
+
+### 追加
+
+- **Compactレイアウト実装**: OBSOverlay に Compact モード用の軽量かつ高可読性なレイアウト（480x120想定）を実装。余白を詰めてフォントサイズを縮小しつつ、WIN / LOSE の数値や勝率は明確に読めるデザイン。
+- **Standardレイアウト維持**: `standard` 選択時は従来の 800x200 向けの見た目を完全維持。
+
+### 変更したファイル
+
+- `src/components/OBSOverlay.tsx` — Compact表示の条件分岐JSXを追加
+
+---
+
+## v0.4.1 (2026-06-20)
+
+ControlPanelに Standard / Compact 表示モードの切り替えUIを追加。
+
+### 追加
+
+- **表示モード切り替えUI**: OBS設定パネル内に「表示モード」セクション（Standard / Compact のトグルボタン）を追加。
+- **Props経由の受け渡し**: フロント側から `settings` および `setLayout` を ControlPanel へ安全に受け渡し。
+
+### 変更したファイル
+
+- `src/App.tsx` — props経由の受け渡しを追加
+- `src/components/ControlPanel.tsx` — トグルボタンUIを追加
+
+---
+
+## v0.4.0 (2026-06-19)
+
+表示モードレイアウト設定 (`settings.layout`) の土台追加。
+
+### 追加
+
+- **settings 構造の追加**: `settings: { layout: "standard" | "compact" }` の設定構造をクライアント・サーバー両方に追加。
+- **後方互換性とフォールバック**: 設定データが壊れていたり欠落している場合は `"standard"` にフォールバックする仕組みを構築。
+- **スコアリセット時の設定維持**: 勝敗数をリセットしても `layout` 設定はクリアされず維持。
+
+### 変更したファイル
+
+- `server/index.ts` — Settings定義、parseSettings、API（reset時維持）
+- `src/hooks/useStarboard.ts` — state定義、localStorage同期、setLayout関数追加
+
+---
+
 ## v0.3.0 (2026-06-18)
 
 操作画面のユーザビリティ改善版。
@@ -59,9 +179,6 @@ OBS 同期対応版。
 ### 追加
 
 - **ローカル API サーバーを新設**（Express / TypeScript）
-  - `GET /api/state` — 現在の状態を取得
-  - `POST /api/state` — 状態を更新（`title`, `win`, `lose`）
-  - `POST /api/reset` — スコアをリセット
 - **Vite プロキシ設定**: Vite 開発サーバーの `/api` を API サーバー（`localhost:3001`）に転送。
 - **フロント側の API 同期**:
   - 初回マウント時にサーバーから状態を取得して反映
@@ -91,7 +208,7 @@ OBS 表示改善版。
 
 ### 変更したファイル
 
-- `src/App.tsx` — ルーティングを追加（`/` と `/overlay`）
+- `src/App.tsx` — ルーティングを追加（`/` 和 `/overlay`）
 - `src/components/OBSOverlay.tsx` — 新規作成
 - `src/components/ControlPanel.tsx` — OBS overlay URL コピーボタンを追加
 
@@ -100,15 +217,3 @@ OBS 表示改善版。
 ## v0.0.0 (2026-06-14)
 
 初期版。最初のリリース。
-
-### 追加
-
-- **WIN / LOSE カウント**: ボタン一つでカウントを増減可能。0 未満にはならない安全設計。
-- **勝率表示**: WIN / (WIN + LOSE) を自動計算しパーセント表示。
-- **タイトル変更**: 任意のタイトルを入力可能。
-- **リセット機能**: 確認ダイアログ付きでスコアを一括リセット。
-- **localStorage 保存**: ブラウザを閉じてもカウントを保持。
-- **Chrome タブ間同期**: `storage` イベントを監視し、同一ブラウザの別タブと自動同期。
-- **UI フレームワーク**: Tailwind CSS + lucide-react で構築。
-- **TypeScript**: フル TypeScript 対応。
-- **Vite**: 高速な開発サーバーとビルド。
