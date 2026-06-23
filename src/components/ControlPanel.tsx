@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Plus, Minus, RotateCcw, Copy, Check, Trophy, Monitor, Wifi, WifiOff, PanelTop } from 'lucide-react';
+import { Plus, Minus, RotateCcw, Copy, Check, Trophy, Monitor, Wifi, WifiOff, PanelTop, Palette } from 'lucide-react';
 
 type Layout = 'standard' | 'compact';
+type ColorPreset = 'default' | 'blue' | 'red' | 'mono';
 
 interface Settings {
   layout: Layout;
+  colorPreset: ColorPreset;
 }
 
 interface ControlPanelProps {
@@ -19,7 +21,15 @@ interface ControlPanelProps {
   setLose: (updater: number | ((prev: number) => number)) => void;
   resetScores: () => void;
   setLayout: (layout: Layout) => void;
+  setColorPreset: (colorPreset: ColorPreset) => void;
 }
+
+const COLOR_PRESETS: { key: ColorPreset; label: string }[] = [
+  { key: 'default', label: 'Default' },
+  { key: 'blue', label: 'Blue' },
+  { key: 'red', label: 'Red' },
+  { key: 'mono', label: 'Mono' },
+];
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
   title,
@@ -33,6 +43,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   setLose,
   resetScores,
   setLayout,
+  setColorPreset,
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -236,6 +247,29 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                 >
                   Compact
                 </button>
+              </div>
+            </div>
+
+            {/* カラープリセット切り替え */}
+            <div className="pt-2 border-t border-slate-700/40">
+              <div className="flex items-center gap-2 mb-2">
+                <Palette className="w-3.5 h-3.5 text-indigo-400" />
+                <span className="text-xs font-semibold text-slate-400">カラープリセット</span>
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {COLOR_PRESETS.map((preset) => (
+                  <button
+                    key={preset.key}
+                    onClick={() => setColorPreset(preset.key)}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-semibold transition ${
+                      settings.colorPreset === preset.key
+                        ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/30'
+                        : 'bg-slate-800 text-slate-400 hover:text-slate-300 border border-slate-700/50'
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
               </div>
             </div>
 

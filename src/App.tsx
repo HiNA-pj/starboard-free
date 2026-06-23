@@ -4,7 +4,7 @@ import { ControlPanel } from './components/ControlPanel';
 import { OBSOverlay } from './components/OBSOverlay';
 
 const App: React.FC = () => {
-  const { title, win, lose, winRate, serverConnected, settings, setTitle, setWin, setLose, resetScores, setLayout } = useStarboard();
+  const { title, win, lose, winRate, serverConnected, settings, setTitle, setWin, setLose, resetScores, setLayout, setColorPreset } = useStarboard();
 
   const path = window.location.pathname;
 
@@ -38,6 +38,7 @@ const App: React.FC = () => {
         setLose={setLose}
         resetScores={resetScores}
         setLayout={setLayout}
+        setColorPreset={setColorPreset}
       />
     </div>
   );
