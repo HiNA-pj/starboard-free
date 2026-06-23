@@ -82,6 +82,10 @@ export function useStarboard() {
   // サーバー接続状態
   const [serverConnected, setServerConnected] = useState(false);
 
+  // --- Undo状態管理 ---
+  // 直前の操作種別 ('win' または 'lose'、無ければ null)
+  const [undoInfo, setUndoInfo] = useState<{ type: 'win' | 'lose' } | null>(null);
+
   // --- Refs (クロージャの古い値問題を回避するため) ---
 
   // 常に最新の値を保持する ref
@@ -168,12 +172,16 @@ export function useStarboard() {
           winRef.current = validated;
           setWinState(validated);
           localStorage.setItem(KEY_WIN, String(validated));
+          // 外部からの更新があった場合は誤操作ではないためUndo履歴をクリア
+          setUndoInfo(null);
         }
         if (typeof data.lose === 'number' && data.lose !== loseRef.current) {
           const validated = Math.max(0, Math.round(data.lose));
           loseRef.current = validated;
           setLoseState(validated);
           localStorage.setItem(KEY_LOSE, String(validated));
+          // 外部からの更新があった場合は誤操作ではないためUndo履歴をクリア
+          setUndoInfo(null);
         }
         if (data.settings !== undefined) {
           const parsed = parseSettings(data.settings);
@@ -264,6 +272,7 @@ export function useStarboard() {
       localStorage.setItem(KEY_WIN, String(validated));
       return validated;
     });
+    setUndoInfo({ type: 'win' }); // 操作を記録
     queueMicrotask(() => postState());
   }, [postState]);
 
@@ -276,8 +285,34 @@ export function useStarboard() {
       localStorage.setItem(KEY_LOSE, String(validated));
       return validated;
     });
+    setUndoInfo({ type: 'lose' }); // 操作を記録
     queueMicrotask(() => postState());
   }, [postState]);
+
+  // undo: 直前の操作を1回だけ取り消す
+  const undo = useCallback(() => {
+    if (!undoInfo) return;
+
+    localUpdatedAtRef.current = Date.now();
+    if (undoInfo.type === 'win') {
+      setWinState((prev) => {
+        const next = Math.max(0, prev - 1);
+        winRef.current = next;
+        localStorage.setItem(KEY_WIN, String(next));
+        return next;
+      });
+    } else if (undoInfo.type === 'lose') {
+      setLoseState((prev) => {
+        const next = Math.max(0, prev - 1);
+        loseRef.current = next;
+        localStorage.setItem(KEY_LOSE, String(next));
+        return next;
+      });
+    }
+
+    setUndoInfo(null); // 取り消し後は履歴をリセット (1回のみ)
+    queueMicrotask(() => postState());
+  }, [undoInfo, postState]);
 
   const resetScores = useCallback(() => {
     localUpdatedAtRef.current = Date.now();
@@ -287,6 +322,7 @@ export function useStarboard() {
     setLoseState(0);
     localStorage.setItem(KEY_WIN, '0');
     localStorage.setItem(KEY_LOSE, '0');
+    setUndoInfo(null); // リセット後は取り消し不可
     // サーバーにもリセットを通知
     (async () => {
       try {
@@ -342,10 +378,12 @@ export function useStarboard() {
         const validated = Math.max(0, parseInt(e.newValue, 10) || 0);
         winRef.current = validated;
         setWinState(validated);
+        setUndoInfo(null); // 他画面で変更があった場合は履歴リセット
       } else if (e.key === KEY_LOSE && e.newValue !== null) {
         const validated = Math.max(0, parseInt(e.newValue, 10) || 0);
         loseRef.current = validated;
         setLoseState(validated);
+        setUndoInfo(null); // 他画面で変更があった場合は履歴リセット
       } else if (e.key === KEY_SETTINGS && e.newValue !== null) {
         try {
           const parsed = parseSettings(JSON.parse(e.newValue));
@@ -374,11 +412,13 @@ export function useStarboard() {
     winRate,
     serverConnected,
     settings,
+    canUndo: undoInfo !== null,
     setTitle: updateTitle,
     setWin: updateWin,
     setLose: updateLose,
     resetScores,
     setLayout,
     setColorPreset,
+    undo,
   };
 }

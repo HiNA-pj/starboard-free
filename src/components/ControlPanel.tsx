@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Minus, RotateCcw, Copy, Check, Trophy, Monitor, Wifi, WifiOff, PanelTop, Palette } from 'lucide-react';
+import { Plus, Minus, RotateCcw, Copy, Check, Trophy, Monitor, Wifi, WifiOff, PanelTop, Palette, History } from 'lucide-react';
 
 type Layout = 'standard' | 'compact';
 type ColorPreset = 'default' | 'blue' | 'red' | 'mono';
@@ -16,12 +16,14 @@ interface ControlPanelProps {
   winRate: string;
   serverConnected: boolean;
   settings: Settings;
+  canUndo: boolean;
   setTitle: (t: string) => void;
   setWin: (updater: number | ((prev: number) => number)) => void;
   setLose: (updater: number | ((prev: number) => number)) => void;
   resetScores: () => void;
   setLayout: (layout: Layout) => void;
   setColorPreset: (colorPreset: ColorPreset) => void;
+  undo: () => void;
 }
 
 const COLOR_PRESETS: { key: ColorPreset; label: string }[] = [
@@ -38,16 +40,17 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   winRate,
   serverConnected,
   settings,
+  canUndo,
   setTitle,
   setWin,
   setLose,
   resetScores,
   setLayout,
   setColorPreset,
+  undo,
 }) => {
   const [copied, setCopied] = useState(false);
 
-  // OBS表示用のURLを取得してクリップボードにコピーする
   const handleCopyUrl = async () => {
     try {
       const overlayUrl = `${window.location.origin}/overlay`;
@@ -166,6 +169,17 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
           {/* 操作ボタン群 */}
           <div className="flex flex-col gap-3 pt-2">
+            {/* Undoボタン */}
+            <button
+              onClick={undo}
+              disabled={!canUndo}
+              className={`w-full py-2.5 px-4 bg-slate-800 ${canUndo ? 'hover:bg-slate-700' : 'opacity-40'} border border-slate-700 text-slate-300 font-semibold rounded-xl flex items-center justify-center gap-2 transition`}
+            >
+              <History className="w-4 h-4" />
+              <span>1つ戻す</span>
+            </button>
+
+            {/* リセットボタン */}
             <button
               onClick={() => {
                 if (window.confirm('数値をリセットしますか？ (タイトルは保持されます)')) {
