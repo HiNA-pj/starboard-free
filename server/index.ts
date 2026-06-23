@@ -6,25 +6,32 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 type Layout = 'standard' | 'compact';
+type ColorPreset = 'default' | 'blue' | 'red' | 'mono';
 
 interface Settings {
   layout: Layout;
+  colorPreset: ColorPreset;
 }
 
-const DEFAULT_SETTINGS: Settings = { layout: 'standard' };
+const DEFAULT_SETTINGS: Settings = { layout: 'standard', colorPreset: 'default' };
 
 function parseSettings(raw: unknown): Settings {
-  if (
-    raw &&
-    typeof raw === 'object' &&
-    'layout' in raw
-  ) {
-    const layout = (raw as { layout?: unknown }).layout;
-    if (layout === 'standard' || layout === 'compact') {
-      return { layout };
+  const result: Settings = { ...DEFAULT_SETTINGS };
+  if (raw && typeof raw === 'object') {
+    const obj = raw as Record<string, unknown>;
+    if (obj.layout === 'standard' || obj.layout === 'compact') {
+      result.layout = obj.layout;
+    }
+    if (
+      obj.colorPreset === 'default' ||
+      obj.colorPreset === 'blue' ||
+      obj.colorPreset === 'red' ||
+      obj.colorPreset === 'mono'
+    ) {
+      result.colorPreset = obj.colorPreset;
     }
   }
-  return DEFAULT_SETTINGS;
+  return result;
 }
 
 // 初期状態
