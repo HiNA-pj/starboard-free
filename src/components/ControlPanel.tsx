@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 type Layout = "standard" | "compact";
-type ColorPreset = "default" | "blue" | "red" | "mono";
+type ColorPreset = "default" | "blue" | "red" | "mono" | "sky" | "pink";
 
 interface Settings {
   layout: Layout;
@@ -44,6 +44,8 @@ const COLOR_PRESETS: { key: ColorPreset; label: string }[] = [
   { key: "blue", label: "Blue" },
   { key: "red", label: "Red" },
   { key: "mono", label: "Mono" },
+  { key: "sky", label: "Sky" },
+  { key: "pink", label: "Pink" },
 ];
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
@@ -340,7 +342,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                     カラープリセット
                   </span>
                 </div>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {COLOR_PRESETS.map((preset) => (
                     <button
                       key={preset.key}

@@ -18,7 +18,7 @@ const LOCAL_CHANGE_GUARD_MS = 1000;
 
 // Settings型定義
 type Layout = 'standard' | 'compact';
-type ColorPreset = 'default' | 'blue' | 'red' | 'mono';
+type ColorPreset = 'default' | 'blue' | 'red' | 'mono' | 'sky' | 'pink';
 
 interface Settings {
   layout: Layout;
@@ -38,7 +38,9 @@ function parseSettings(raw: unknown): Settings {
       obj.colorPreset === 'default' ||
       obj.colorPreset === 'blue' ||
       obj.colorPreset === 'red' ||
-      obj.colorPreset === 'mono'
+      obj.colorPreset === 'mono' ||
+      obj.colorPreset === 'sky' ||
+      obj.colorPreset === 'pink'
     ) {
       result.colorPreset = obj.colorPreset;
     }
