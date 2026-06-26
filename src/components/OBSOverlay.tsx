@@ -13,6 +13,7 @@ interface OBSOverlayProps {
   win: number;
   lose: number;
   winRate: string;
+  currentStreak: number;
   settings: Settings;
 }
 
@@ -212,15 +213,23 @@ function getPreset(colorPreset: ColorPreset, isCompact: boolean) {
   return isCompact ? COMPACT_PRESETS[colorPreset] : STANDARD_PRESETS[colorPreset];
 }
 
+function getStreakText(currentStreak: number): string | null {
+  if (currentStreak > 0) return `${currentStreak}連勝中`;
+  if (currentStreak < 0) return `${Math.abs(currentStreak)}連敗中`;
+  return null;
+}
+
 export const OBSOverlay: React.FC<OBSOverlayProps> = ({
   title,
   win,
   lose,
   winRate,
+  currentStreak,
   settings,
 }) => {
   const isCompact = settings.layout === 'compact';
   const theme = getPreset(settings.colorPreset, isCompact);
+  const streakText = getStreakText(currentStreak);
 
   if (isCompact) {
     return (
@@ -277,6 +286,11 @@ export const OBSOverlay: React.FC<OBSOverlayProps> = ({
             <span className={`text-3xl font-black ${theme.winRateValue} font-mono tracking-tighter`}>
               {winRate}
             </span>
+            {streakText && (
+              <span className={`text-[10px] ${theme.winRateLabel} tracking-wider ml-2`}>
+                {streakText}
+              </span>
+            )}
           </div>
         </div>
 

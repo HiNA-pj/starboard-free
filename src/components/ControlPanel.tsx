@@ -27,6 +27,7 @@ interface ControlPanelProps {
   win: number;
   lose: number;
   winRate: string;
+  currentStreak: number;
   serverConnected: boolean;
   settings: Settings;
   canUndo: boolean;
@@ -48,11 +49,18 @@ const COLOR_PRESETS: { key: ColorPreset; label: string }[] = [
   { key: "pink", label: "Pink" },
 ];
 
+function getStreakText(currentStreak: number): string | null {
+  if (currentStreak > 0) return `${currentStreak}連勝中`;
+  if (currentStreak < 0) return `${Math.abs(currentStreak)}連敗中`;
+  return null;
+}
+
 export const ControlPanel: React.FC<ControlPanelProps> = ({
   title,
   win,
   lose,
   winRate,
+  currentStreak,
   serverConnected,
   settings,
   canUndo,
@@ -65,6 +73,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   undo,
 }) => {
   const [copied, setCopied] = useState(false);
+  const streakText = getStreakText(currentStreak);
 
   const handleCopyUrl = async () => {
     try {
@@ -210,9 +219,16 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               <span className="text-sm font-semibold text-slate-400 tracking-wide">
                 勝率
               </span>
-              <span className="text-2xl font-extrabold text-indigo-400 font-mono">
-                {winRate}
-              </span>
+              <div className="flex items-center gap-3">
+                {streakText && (
+                  <span className="text-xs text-slate-500 tracking-wider">
+                    {streakText}
+                  </span>
+                )}
+                <span className="text-2xl font-extrabold text-indigo-400 font-mono">
+                  {winRate}
+                </span>
+              </div>
             </div>
 
             {/* 操作ボタン群 */}
