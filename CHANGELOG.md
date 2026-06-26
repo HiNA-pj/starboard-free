@@ -1,5 +1,28 @@
 # Changelog
 
+## v0.6.3 (2026-06-26)
+
+Release Readiness / Onboarding UX — 初回ユーザー向け導線改善。
+
+### 追加
+
+- **ZIP解凍の説明**: README冒頭にZIPファイルを解凍してから使うよう追記。
+- **黒い画面を閉じない説明**: 起動中はターミナル画面を閉じずにそのままにするよう追記。
+- **OBSなしでも確認可能なことを明記**: ブラウザで Overlay 表示を事前確認できることを追記。
+- **URLの役割を明確化**: 操作画面とOBS Overlay画面の違いをより分かりやすく記載。
+- **APIポートの注意事項**: `localhost:3001` の内部APIサーバーについて軽く追記。
+- **ControlPanelのバージョン表示を `v0.6.3` に更新**。
+- **Reset確認ダイアログの文言改善**: 保持される設定をより具体的に表示。
+
+### 変更したファイル
+
+- `README.md` — 初回セットアップ・URL説明・注意点を拡充。
+- `package.json` — version を `0.6.3` に更新。
+- `package-lock.json` — version を `0.6.3` に更新。
+- `src/components/ControlPanel.tsx` — バージョン表示を修正、Reset確認文言を改善。
+
+---
+
 ## v0.6.2 (2026-06-26)
 
 Color Preset に Sky / Pink を追加し、全6色の配色テーマを提供。

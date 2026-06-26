@@ -92,7 +92,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               <span>
                 Starboard Free{" "}
                 <span className="text-xs bg-indigo-800 text-indigo-200 px-1.5 py-0.5 rounded ml-1 font-mono">
-                  v0{" "}
+                  v0.6.3{" "}
                 </span>{" "}
               </span>{" "}
             </h1>
@@ -234,7 +234,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                 onClick={() => {
                   if (
                     window.confirm(
-                      "数値をリセットしますか？ (タイトルは保持されます)",
+                      "勝敗カウントをゼロに戻しますか？ タイトル・表示モード・カラープリセットはそのまま残ります。",
                     )
                   ) {
                     resetScores();
