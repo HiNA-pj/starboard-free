@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.6.0 (2026-06-24)
+
+配信中の誤操作対策として、Undo機能を追加。
+
+### 追加
+
+- **Undo機能**: WIN / LOSE の直前操作を1回だけ戻せる。
+  - Undo可能な時だけUndoボタンが有効になる
+  - Undo後は履歴をクリア（連打防止）
+  - Reset後はUndo不可
+  - Title / Layout / Color Preset変更はUndo対象外
+  - Undo後もローカルAPI / OBSOverlayに正しく同期
+  - countがマイナスにならないように保護
+
+### 変更したファイル
+
+- `src/hooks/useStarboard.ts` — undoInfo / undo関数を追加
+- `src/App.tsx` — canUndo / undoをControlPanelに渡す
+- `src/components/ControlPanel.tsx` — Undoボタンを追加
+
+---
+
 ## v0.5.2 (2026-06-23)
 
 OBSOverlay に Color Preset 配色を反映。
