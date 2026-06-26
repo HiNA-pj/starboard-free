@@ -60,6 +60,7 @@ interface StarboardState {
 title: string;
 win: number;
 lose: number;
+currentStreak: number;
 settings: Settings;
 updatedAt: number; // ミリ秒のタイムスタンプ
 }
@@ -68,6 +69,7 @@ let state: StarboardState = {
 title: '勝敗カウンター',
 win: 0,
 lose: 0,
+currentStreak: 0,
 settings: DEFAULT_SETTINGS,
 updatedAt: Date.now(),
 };
@@ -84,7 +86,7 @@ res.json(state);
 
 // 状態を更新する
 app.post('/api/state', (req, res) => {
-const { title, win, lose, settings } = req.body;
+const { title, win, lose, currentStreak, settings } = req.body;
 
 if (title !== undefined) {
 state.title = title;
@@ -96,6 +98,10 @@ state.win = Math.max(0, Math.round(win)); // 整数化＆0未満にならない�
 
 if (lose !== undefined) {
 state.lose = Math.max(0, Math.round(lose)); // 整数化＆0未満にならないように
+}
+
+if (currentStreak !== undefined && typeof currentStreak === 'number' && Number.isFinite(currentStreak)) {
+state.currentStreak = Math.round(currentStreak);
 }
 
 if (settings !== undefined) {
@@ -110,6 +116,7 @@ res.json(state);
 app.post('/api/reset', (req, res) => {
 state.win = 0;
 state.lose = 0;
+state.currentStreak = 0;
 
 // titleは維持、settingsも維持（欠落していればフォールバック）
 if (!state.settings || typeof state.settings !== 'object') {
