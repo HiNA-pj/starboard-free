@@ -1,5 +1,29 @@
 # Changelog
 
+## v0.6.2 (2026-06-26)
+
+Color Preset に Sky / Pink を追加し、全6色の配色テーマを提供。
+
+### 追加
+
+- **Sky / Pink プリセット**: カラープリセットに Sky（明るい水色系）と Pink（ピンク系）を追加。合計6色から選択可能。
+- **OBSOverlay の Standard / Compact 両対応**: 両レイアウトで Sky / Pink を含む全プリセットが反映。
+- **ControlPanel の6色対応**: Color Preset 選択UIを6色（Default / Blue / Red / Mono / Sky / Pink）に拡張。
+- **server / frontend の validation 対応**: `parseSettings` の許可値に `sky` / `pink` を追加。
+
+### 変更
+
+- **Red / Sky / Pink の色調整**: 配信画面での視認性とプリセットとしての識別性を両立するよう各色を最適化。
+
+### 変更したファイル
+
+- `src/components/OBSOverlay.tsx` — Standard / Compact の全プリセット定義を拡張。
+- `src/components/ControlPanel.tsx` — カラープリセットボタンを6色に拡張。
+- `src/hooks/useStarboard.ts` — `parseSettings` に `sky`/`pink` を追加。
+- `server/index.ts` — `parseSettings` に `sky`/`pink` を追加。
+
+---
+
 ## v0.6.0 (2026-06-24)
 
 配信中の誤操作対策として、Undo機能を追加。
