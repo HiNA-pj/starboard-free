@@ -1,5 +1,34 @@
 # Changelog
 
+## v0.7.0 (2026-06-27)
+
+Minimal Simple Streak Candidate — 現在の連勝・連敗表示を追加。
+
+### 追加
+
+- **currentStreak state**: 現在の連勝/連敗数を保持するstateを追加。
+- **API state に currentStreak を追加**: サーバーとの同期に対応。
+- **localStorage fallback**: `starboard_current_streak` キーで永続化。
+- **WIN/LOSE 連動**: 連勝中は正の値、連敗中は負の値で自動更新。
+- **Undo対応**: 直前のStreak状態に正確に戻る（prevStreak保存）。
+- **Reset対応**: スコアリセット時にStreakも `0` にクリア。
+- **Standard Overlay表示**: 勝率の右側に小さく表示（`N連勝中` / `N連敗中`）。
+- **ControlPanel表示**: 勝率の横に小さく表示。
+- **Compact Overlay非表示**: レイアウト優先のため非表示。
+
+### 変更したファイル
+
+- `src/hooks/useStarboard.ts` — currentStreak state / Undo / Reset / API同期
+- `server/index.ts` — StarboardState に currentStreak 追加
+- `src/App.tsx` — currentStreak を OBSOverlay / ControlPanel に渡す
+- `src/components/OBSOverlay.tsx` — Standard Layout に Streak 表示追加
+- `src/components/ControlPanel.tsx` — Live Control 内に Streak 表示追加
+- `README.md` — 連勝・連敗表示の説明を追加
+- `package.json` — version を `0.7.0` に更新
+- `package-lock.json` — version を `0.7.0` に更新
+
+---
+
 ## v0.6.3 (2026-06-26)
 
 Release Readiness / Onboarding UX — 初回ユーザー向け導線改善。
