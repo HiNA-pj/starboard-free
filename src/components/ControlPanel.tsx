@@ -115,7 +115,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               <span>
                 Starboard Free{" "}
                 <span className="text-xs bg-indigo-800 text-indigo-200 px-1.5 py-0.5 rounded ml-1 font-mono">
-                  v0.7.1{" "}
+                  v0.8.0{" "}
                 </span>{" "}
               </span>{" "}
             </h1>

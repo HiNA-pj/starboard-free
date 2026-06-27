@@ -1,4 +1,28 @@
 # Changelog
+## v0.8.0 Release Candidate (2026-06-28)
+
+v0.8.0 Release Candidate フェーズに進行。機能追加を停止し、安定化・配布準備に集中する段階へ移行。
+
+### 内容
+
+- v0.8.0 RC前QAを実施し、主要機能・ドキュメント・配布準備の状態を確認
+- ControlPanel表示バージョンを v0.7.1 から v0.8.0 に更新
+- `package.json` / `package-lock.json` の version を `0.8.0` に更新
+- v0.7.0 Minimal Simple Streak Candidate の状態を確認
+- v0.7.1 Session Summary / Result Copy の状態を確認
+- v0.7.2 Opening Note が Deferred / Not Released として記録済みであることを確認
+- v1.0に向けて、今後は配布準備・Known Issues整理・最終QAに集中
+
+### 変更したファイル
+
+- `package.json` — version を `0.8.0` に更新
+- `package-lock.json` — version を `0.8.0` に更新
+- `src/components/ControlPanel.tsx` — バージョン表示を v0.8.0 に更新
+- `CHANGELOG.md` — v0.8.0 Release Candidate エントリを追加
+
+---
+
+
 
 ## v0.7.2 Opening Note (Deferred / Not Released)
 
