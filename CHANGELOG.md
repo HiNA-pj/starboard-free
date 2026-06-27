@@ -1,4 +1,29 @@
 # Changelog
+## v0.9.0 Dist Distribution RC (2026-06-28)
+
+v1.0前の配布方式RCとして、dist配布型へ移行。
+
+### 内容
+
+- Vite dev server を通常起動から外し、server単独起動へ変更
+- 操作画面URLを `http://localhost:3001` に統一
+- OBS Overlay URLを `http://localhost:3001/overlay` に統一
+- `start-starboard.bat` を dist配布型に更新
+- READMEを dist配布型 / localhost:3001 前提に更新
+- ZIP配布時に、通常ユーザーは `server` フォルダでの `npm install` のみで起動できる導線へ整理
+- v1.0前に、配布方式・起動URL・OBS連携を検証するためのRCとして位置づけ
+
+### 変更したファイル
+
+- `start-starboard.bat` — server単独起動 / localhost:3001 前提へ変更
+- `README.md` — dist配布型 / localhost:3001 前提へ更新
+- `package.json` — version を `0.9.0` に更新
+- `package-lock.json` — version を `0.9.0` に更新
+- `src/components/ControlPanel.tsx` — 表示バージョンを v0.9.0 に更新
+- `CHANGELOG.md` — v0.9.0 Dist Distribution RC エントリを追加
+
+---
+
 ## v0.8.0 Release Candidate (2026-06-28)
 
 v0.8.0 Release Candidate フェーズに進行。機能追加を停止し、安定化・配布準備に集中する段階へ移行。
