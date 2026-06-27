@@ -1,5 +1,39 @@
 # Changelog
 
+## v0.7.2 Opening Note (Deferred / Not Released)
+
+Optional Opening Note の検討結果として、v1.0スコープからは延期することを決定。
+
+### 結論
+
+- v0.7.2 Optional Opening Note は、v1.0スコープから延期する
+- v1.1以降、またはPlus / Session Summary拡張候補として再検討する
+- 次のフェーズは v0.8.0 Release Candidate
+
+### 延期理由
+
+- v0.7.1までで、Free v1.0に必要な「配信後に結果をコピーできる」は達成済み
+- Opening Noteは便利だが、v1.0完成条件には必須ではない
+- MR / LP / ランク / 使用キャラ / テンプレート / 履歴保存などに広がりやすい
+- Setupに置くと、配信ごとに変えたい値と「設定はSetupに閉じ込める」方針の間にUX上のジレンマがある
+- v1.0前は新機能追加よりRelease Candidateとして安定化を優先する
+
+### 将来検討時の最小仕様メモ
+
+もし v1.1 以降で採用する場合の防波堤：
+
+- 自由入力欄1つだけ
+- Result Copyに1行だけ差し込む
+- 空欄なら出さない
+- MR / LP / ランク専用欄にはしない
+- 履歴保存しない
+- テンプレート編集しない
+- 自動投稿しない
+- OBS Overlayには出さない
+- API stateに乗せるかは将来再検討
+
+---
+
 ## v0.7.1 (2026-06-27)
 
 Session Summary / Result Copy として、現在の対戦結果をコピーできるボタンを追加。
