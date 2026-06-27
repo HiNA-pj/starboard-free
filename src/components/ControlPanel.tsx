@@ -73,6 +73,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   undo,
 }) => {
   const [copied, setCopied] = useState(false);
+  const [resultCopied, setResultCopied] = useState(false);
   const streakText = getStreakText(currentStreak);
 
   const handleCopyUrl = async () => {
@@ -83,6 +84,19 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("URLのコピーに失敗しました: ", err);
+    }
+  };
+
+  const handleCopyResult = async () => {
+    try {
+      const isDefaultTitle = !title || title.trim() === "" || title.trim() === "勝敗カウンター";
+      const titleLine = isDefaultTitle ? "今日の対戦結果：" : `今日の対戦結果：${title.trim()}`;
+      const resultText = `${titleLine}\n${win}勝${lose}敗 / 勝率${winRate}`;
+      await navigator.clipboard.writeText(resultText);
+      setResultCopied(true);
+      setTimeout(() => setResultCopied(false), 2000);
+    } catch (err) {
+      console.error("結果のコピーに失敗しました: ", err);
     }
   };
 
@@ -230,6 +244,24 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                 </span>
               </div>
             </div>
+
+            {/* Copy Result ボタン */}
+            <button
+              onClick={handleCopyResult}
+              className={`w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-600/20`}
+            >
+              {resultCopied ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  <span>コピーしました</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" />
+                  <span>結果をコピー</span>
+                </>
+              )}
+            </button>
 
             {/* 操作ボタン群 */}
             <div className="flex flex-col gap-3 pt-2">
