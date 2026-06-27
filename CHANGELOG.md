@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.7.1 (2026-06-27)
+
+Session Summary / Result Copy として、現在の対戦結果をコピーできるボタンを追加。
+
+### 追加
+
+- **「結果をコピー」ボタン**: ControlPanel の Live Control に追加。現在の対戦結果をクリップボードにコピー可能。
+- **コピー内容**: Title / Wins / Losses / Win Rate を含める。
+- **Title省略**: デフォルトタイトル「勝敗カウンター」の場合は省略。
+- **0勝0敗対応**: スコアが0の状態でもコピー可能。
+- **コピー成功表示**: 2秒間「コピーしました」を表示。
+- **currentStreak非含**: 連勝・連敗情報はコピー文に含めない。
+- **履歴保存なし**: コピーした結果は保存されない。毎回手動でコピー。
+- **自動投稿なし**: SNSへの自動投稿機能は未実装。
+- **テンプレ編集なし**: コピー文のカスタマイズは未実装。
+
+### 変更したファイル
+
+- `src/components/ControlPanel.tsx` — 「結果をコピー」ボタン追加、handleCopyResult 関数追加、resultCopied state 追加
+- `README.md` — 「結果をコピー (Session Summary)」セクション追加
+- `package.json` — version を `0.7.1` に更新
+- `package-lock.json` — version を `0.7.1` に更新
+
+---
+
 ## v0.7.0 (2026-06-27)
 
 Minimal Simple Streak Candidate — 現在の連勝・連敗表示を追加。

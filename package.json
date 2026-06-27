@@ -1,7 +1,7 @@
 {
   "name": "starboard-free",
   "private": true,
-  "version": "0.7.0",
+  "version": "0.7.1",
   "type": "module",
   "scripts": {
     "dev": "concurrently \"vite\" \"npm run dev --workspace=server\"",
