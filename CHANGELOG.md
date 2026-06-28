@@ -1,4 +1,39 @@
 # Changelog
+## v1.0.0 Starboard Free (2026-06-29)
+
+v1.0.0 は最初の安定版 Free リリースです。
+
+v0.9.0 Dist Distribution RC の配布起動テストが正常に完了したことを受け、安定版としてリリースします。
+
+### 内容
+
+- **配布起動**: `start-starboard.bat` から配布版を起動
+- **Control Panel**: `http://localhost:3001` で操作画面を提供
+- **OBS Overlay**: `http://localhost:3001/overlay` でOBS連携を提供
+- **主な機能**:
+  - WIN / LOSE カウンター
+  - 勝率表示
+  - タイトル設定
+  - リセット機能
+  - Undo機能
+  - Standard / Compact レイアウト
+  - 6色カラープリセット
+  - OBS overlay表示
+  - OBS URLコピー
+  - 現在の連勝/連敗表示
+  - 結果コピー機能
+- v1.0.0 では新機能は追加されていません。これは安定版リリースのためのメタデータ・ドキュメント更新です。
+
+### 変更したファイル
+
+- `package.json` — version を `1.0.0` に更新
+- `package-lock.json` — version を `1.0.0` に更新
+- `src/components/ControlPanel.tsx` — 表示バージョンを v1.0.0 に更新
+- `CHANGELOG.md` — v1.0.0 Starboard Free エントリを追加
+
+---
+
+
 ## v0.9.0 Dist Distribution RC (2026-06-28)
 
 v1.0前の配布方式RCとして、dist配布型へ移行。
