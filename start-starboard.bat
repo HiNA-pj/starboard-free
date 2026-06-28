@@ -1,36 +1,44 @@
-﻿@echo off
-cd /d %~dp0
+@echo off
+cd /d "%~dp0"
+
 echo ====== Starboard Free v0.9.0 ======
 echo.
 
 node --version >nul 2>nul
 if %ERRORLEVEL% NEQ 0 (
-  echo [エラー] Node.js が見つかりません。
-  echo Node.js をインストールしてから、もう一度 start-starboard.bat を実行してください。
+  echo [ERROR] Node.js was not found.
+  echo Please install Node.js, then run start-starboard.bat again.
   echo.
   pause
-  exit /b
+  exit /b 1
 )
 
-if not exist dist\index.html (
-  echo [エラー] dist/index.html が見つかりません。
-  echo 配布用ファイルが不足している可能性があります。
-  echo 開発環境の場合は npm run build を実行してください。
+if not exist "dist\index.html" (
+  echo [ERROR] dist\index.html was not found.
+  echo The distribution files may be incomplete.
+  echo If this is a development environment, run npm run build first.
   echo.
   pause
-  exit /b
+  exit /b 1
 )
 
-echo Starboard Free を起動しています...
+if not exist "server\node_modules" (
+  echo [ERROR] server dependencies were not found.
+  echo Open the server folder and run: npm install
+  echo.
+  pause
+  exit /b 1
+)
+
+echo Starting Starboard Free...
 echo.
-echo 操作画面:    http://localhost:3001
-echo OBS Overlay: http://localhost:3001/overlay
+echo Control Panel: http://localhost:3001
+echo OBS Overlay:   http://localhost:3001/overlay
 echo.
-echo 初回起動前に server フォルダで npm install を実行してください。
-echo 起動中はこの画面を閉じないでください。
+echo Keep this window open while using Starboard Free.
 echo.
 
-cd server
+cd /d "%~dp0server"
 npm start
 
 pause

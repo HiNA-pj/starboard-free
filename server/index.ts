@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 
+const distPath = path.join(process.cwd(), '..', 'dist');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -129,11 +130,11 @@ res.json(state);
 
 // Viteのビルド成果物を静的に配信 (本番環境向け)
 // 開発環境ではVite dev serverがこれを担当します
-app.use(express.static(path.join(__dirname, '..', 'dist')));
+app.use(express.static(path.join(distPath, '..', 'dist')));
 
 // その他のすべてのリクエストに対して index.html を返す (SPAルーティング)
 app.get('*', (req, res) => {
-res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
+res.sendFile(path.join(distPath, '..', 'dist', 'index.html'));
 });
 
 app.listen(PORT, () => {
