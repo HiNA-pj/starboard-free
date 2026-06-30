@@ -1,7 +1,7 @@
 @echo off
 cd /d "%~dp0"
 
-echo ====== Starboard Free v0.9.0 ======
+echo ====== Starboard Free v1.0.0 ======
 echo.
 
 node --version >nul 2>nul
